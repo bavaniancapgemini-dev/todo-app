@@ -1,9 +1,15 @@
-tasks = []
+from tasks import show_tasks
+from storage import save_tasks, load_tasks
+from utils import title
+
+
+tasks = load_tasks()
 
 
 while True:
 
-    print("\n---- TODO APP ----")
+    title()
+
     print("1. Add Task")
     print("2. View Tasks")
     print("3. Delete Task")
@@ -18,25 +24,19 @@ while True:
 
         tasks.append(task)
 
+        save_tasks(tasks)
+
         print("Task Added")
 
 
     elif choice == "2":
 
-        print("\nYour Tasks:")
-
-        for i, task in enumerate(tasks):
-
-            print(i + 1, "-", task)
+        show_tasks(tasks)
 
 
     elif choice == "3":
 
-        print("\nYour Tasks:")
-
-        for i, task in enumerate(tasks):
-
-            print(i + 1, "-", task)
+        show_tasks(tasks)
 
         number = int(input("Enter task number to delete: "))
 
@@ -46,6 +46,8 @@ while True:
         if index >= 0 and index < len(tasks):
 
             tasks.pop(index)
+
+            save_tasks(tasks)
 
             print("Task Deleted")
 
