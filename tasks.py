@@ -1,71 +1,38 @@
 from colorama import Fore
+from datetime import datetime
 
 def show_tasks(tasks):
 
-    print("\n===== ALL TASKS =====\n")
+    print(Fore.CYAN + "\n===== ALL TASKS =====\n")
 
     if len(tasks) == 0:
 
-        print("No tasks available")
-
+        print(Fore.RED + "No Tasks Found")
         return
 
-    for i, task in enumerate(tasks):
+    today = datetime.now().strftime("%Y-%m-%d")
 
-        parts = task.split("|")
+    for i, task in enumerate(tasks, start=1):
 
-        # OLD FORMAT SUPPORT
-        if len(parts) == 1:
+        parts = task.strip().split("|")
 
-            name = parts[0]
+        if len(parts) < 5:
+            continue
 
-            status = "Pending"
+        name = parts[0]
+        status = parts[1]
+        priority = parts[2]
+        created = parts[3]
+        due = parts[4]
 
-            priority = "Medium"
+        overdue = ""
 
-            date = "No Date"
+        if due < today and status != "Completed":
+            overdue = Fore.RED + " ⚠ OVERDUE"
 
-        elif len(parts) == 3:
-
-            name = parts[0]
-
-            status = parts[1]
-
-            priority = "Medium"
-
-            date = parts[2]
-
-        else:
-
-            name = parts[0]
-
-            status = parts[1]
-
-            priority = parts[2]
-
-            date = parts[3]
-
-        symbol = "[X]" if status == "Completed" else "[ ]"
-
-        # PRIORITY COLORS
-        if priority.lower() == "high":
-
-            priority_color = Fore.RED
-
-        elif priority.lower() == "medium":
-
-            priority_color = Fore.YELLOW
-
-        else:
-
-            priority_color = Fore.GREEN
-
-        print(f"{i+1}. {symbol} {name}")
-
-        print(f"   Status  : {status}")
-
-        print(f"   Priority: {priority_color}{priority}")
-
-        print(f"   Date    : {date}")
-
+        print(Fore.YELLOW + f"{i}. {name}")
+        print(Fore.WHITE + f"   Status    : {status}")
+        print(Fore.WHITE + f"   Priority  : {priority}")
+        print(Fore.WHITE + f"   Created   : {created}")
+        print(Fore.WHITE + f"   Due Date  : {due}{overdue}")
         print()

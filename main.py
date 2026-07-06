@@ -5,6 +5,7 @@ from search import search_task
 from edit import edit_task
 from datetime import datetime
 from colorama import Fore, init
+from dashboard import show_dashboard
 from stats import task_stats
 from complete import complete_task
 from clear_completed import clear_completed
@@ -20,26 +21,29 @@ while True:
 
     title()
 
-    print("1. Add Task")
-    print("2. View Tasks")
-    print("3. Delete Task")
-    print("4. Complete Task")
-    print("5. Task Statistics")
-    print("6. Clear Completed Tasks")
-    print("7. Productivity Report")
-    print("8. Exit")
+    print(Fore.CYAN + "1. Add Task")
+    print(Fore.CYAN + "2. View Tasks")
+    print(Fore.CYAN + "3. Delete Task")
+    print(Fore.CYAN + "4. Complete Task")
+    print(Fore.CYAN + "5. Task Statistics")
+    print(Fore.CYAN + "6. Clear Completed Tasks")
+    print(Fore.CYAN + "7. Productivity Report")
+    print(Fore.CYAN + "8. Dashboard")
+    print(Fore.CYAN + "9. Exit")
 
     choice = input("Choose: ")
 
     if choice == "1":
 
-        task_name = input("Enter task: ")
+        task_name = input("Enter Task: ")
 
-        priority = input("Priority (Low/Medium/High): ")
+        priority = input("Priority (High/Medium/Low): ")
 
-        date = input("Enter due date (YYYY-MM-DD): ")
+        due_date = input("Due Date (YYYY-MM-DD): ")
 
-        task = f"{task_name}|Pending|{priority}|{date}"
+        created_date = datetime.now().strftime("%Y-%m-%d")
+
+        task = f"{task_name}|Pending|{priority}|{created_date}|{due_date}"
 
         tasks.append(task)
 
@@ -105,8 +109,12 @@ while True:
     elif choice == "7":
 
         productivity_report(tasks)
-
+        
     elif choice == "8":
+        
+        show_dashboard(tasks)
+
+    elif choice == "9":
 
         print("Goodbye!")
 
