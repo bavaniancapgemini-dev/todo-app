@@ -1,12 +1,15 @@
 from tkinter import *
 from tkinter import messagebox
 
+from notifications import check_due_tasks, show_notification
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
 from database import *
 from security import hash_password
 from datetime import datetime
+
+from notifications import *
 
 CURRENT_USER = ""
 
@@ -256,6 +259,8 @@ def refresh_tasks():
 
     tasks = load_tasks(CURRENT_USER)
     
+    check_due_tasks(tasks)
+    
     stats_label.config(
     text=f"TASKS\n{len(tasks)}"
     )
@@ -299,6 +304,14 @@ def add_new_task():
     )
 
     refresh_tasks()
+    
+    show_notification(
+
+    "Task Added",
+
+    f"{task} added successfully"
+
+    )
 
     messagebox.showinfo(
         "Success",
@@ -318,6 +331,14 @@ def delete_selected():
     task_id = values[0]
 
     delete_task(task_id)
+    
+    show_notification(
+
+    "Task Deleted",
+
+    "Task removed successfully"
+
+    )
 
     refresh_tasks()
 
@@ -334,6 +355,14 @@ def complete_selected():
     task_id = values[0]
 
     complete_task(task_id)
+    
+    show_notification(
+
+    "Task Completed",
+
+    "Task marked as completed"
+
+    )
 
     refresh_tasks()
 
@@ -408,6 +437,14 @@ def login():
         main_frame.pack(fill=BOTH, expand=True)
 
         refresh_tasks()
+        
+        show_notification(
+
+        "TODO APP",
+
+        f"Welcome back {CURRENT_USER}"
+
+        )
 
     else:
 
@@ -478,5 +515,13 @@ def update_clock():
     window.after(1000, update_clock)
     
 update_clock()
+
+def auto_refresh():
+
+    refresh_tasks()
+
+    window.after(60000, auto_refresh)
+    
+auto_refresh()
     
 window.mainloop()
