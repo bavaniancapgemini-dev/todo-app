@@ -1,5 +1,4 @@
 from tasks import show_tasks
-from storage import save_tasks, load_tasks
 from utils import title
 from search import search_task
 from edit import edit_task
@@ -11,7 +10,8 @@ from complete import complete_task
 from clear_completed import clear_completed
 from productivity import productivity_report
 from filter import filter_tasks
-from auth import register, login
+from database import *
+from security import hash_password
 from getpass import getpass
 
 
@@ -36,7 +36,9 @@ while True:
         username = input("Username: ")
         password = getpass("Password: ")
 
-        success = login(username, password)
+        hashed = hash_password(password)
+
+        success = login_user(username, hashed)
 
         if success:
 
@@ -56,7 +58,9 @@ while True:
         username = input("Choose Username: ")
         password = getpass("Choose Password: ")
 
-        success = register(username, password)
+        hashed = hash_password(password)
+
+        success = register_user(username, hashed)
 
         if success:
 
@@ -109,9 +113,16 @@ while True:
 
         task = f"{task_name}|Pending|{priority}|{category}|{created_date}|{due_date}"
 
-        tasks.append(task)
+        add_task(
 
-        save_tasks(tasks, CURRENT_USER)
+            CURRENT_USER,
+            task_name,
+            "Pending",
+            priority,
+            category,
+            created_date,
+            due_date
+        )
 
         print(Fore.GREEN + "Task Added")
 
@@ -122,43 +133,19 @@ while True:
 
     elif choice == "3":
 
-        show_tasks(tasks)
+        task_id = int(input("Enter Task ID To Delete: "))
 
-        number = int(input("Enter task number to delete: "))
+        delete_task(task_id)
 
-        index = number - 1
-
-
-        if index >= 0 and index < len(tasks):
-
-            tasks.pop(index)
-
-            save_tasks(tasks, CURRENT_USER)
-
-            print("Task Deleted")
-
-        else:
-
-            print("Invalid Task")
+        print("Task Deleted")
             
     elif choice == "4":
 
-        show_tasks(tasks)
+        task_id = int(input("Enter Task ID To Complete: "))
 
-        number = int(input("Enter task number to complete: "))
+        complete_task(task_id)
 
-        index = number - 1
-        
-        success = complete_task(tasks, index)
-
-        if success:
-            
-            print(Fore.GREEN + "Task Completed")
-
-        else:
-
-            print(Fore.RED + "Invalid Task")
-            
+        print("Task Completed")
     
     elif choice == "5":
 
@@ -180,39 +167,25 @@ while True:
         
     elif choice == "9":
 
-        show_tasks(tasks)
+        task_id = int(input("Enter Task ID To Edit: "))
 
-        number = int(input("Enter Task Number To Edit: "))
+        name = input("New Task Name: ")
 
-        index = number - 1
+        priority = input("New Priority: ")
 
-        if index >= 0 and index < len(tasks):
+        category = input("New Category: ")
 
-            old = tasks[index].split("|")
+        due = input("New Due Date: ")
 
-            print("Leave blank to keep old value")
+        update_task(
+            task_id,
+            name,
+            priority,
+            category,
+            due
+        )
 
-            new_name = input(f"New Name ({old[0]}): ")
-            new_priority = input(f"New Priority ({old[2]}): ")
-            new_category = input(f"New Category ({old[3]}): ")
-            new_due = input(f"New Due Date ({old[5]}): ")
-
-            name = new_name if new_name else old[0]
-            priority = new_priority if new_priority else old[2]
-            category = new_category if new_category else old[3]
-            due = new_due if new_due else old[5]
-
-            updated = f"{name}|{old[1]}|{priority}|{category}|{old[4]}|{due}"
-
-            tasks[index] = updated
-
-            save_tasks(tasks, CURRENT_USER)
-
-            print(Fore.GREEN + "Task Updated")
-
-        else:
-
-            print(Fore.RED + "Invalid Task")
+        print("Task Updated")
             
     elif choice == "10":
         

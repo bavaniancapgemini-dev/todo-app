@@ -1,19 +1,20 @@
-from storage import save_tasks
+import sqlite3
 
-def clear_completed(tasks):
 
-    new_tasks = []
+def clear_completed():
 
-    for task in tasks:
+    conn = sqlite3.connect("todo.db")
 
-        parts = task.split("|")
+    cursor = conn.cursor()
 
-        if len(parts) >= 4:
+    cursor.execute(
 
-            if parts[1] != "Completed":
+        "DELETE FROM tasks WHERE status='Completed'"
 
-                new_tasks.append(task)
+    )
 
-    save_tasks(new_tasks)
+    conn.commit()
 
-    return new_tasks
+    conn.close()
+
+    print("Completed Tasks Cleared")
