@@ -11,11 +11,70 @@ from complete import complete_task
 from clear_completed import clear_completed
 from productivity import productivity_report
 from filter import filter_tasks
+from auth import register, login
+from getpass import getpass
+
 
 init(autoreset=True)
 
-tasks = load_tasks()
+failed_attempts = 0
 
+CURRENT_USER = ""
+
+while True:
+
+    print("\n===== TODO APP LOGIN =====")
+
+    print("1. Login")
+    print("2. Register")
+    print("3. Exit")
+
+    auth_choice = input("Choose: ")
+
+    if auth_choice == "1":
+
+        username = input("Username: ")
+        password = getpass("Password: ")
+
+        success = login(username, password)
+
+        if success:
+
+            CURRENT_USER = username
+
+            print("Login Successful")
+
+            break
+
+        else:
+
+            failed_attempts += 1
+            print("Invalid Login")
+
+    elif auth_choice == "2":
+
+        username = input("Choose Username: ")
+        password = getpass("Choose Password: ")
+
+        success = register(username, password)
+
+        if success:
+
+            print("Account Created")
+
+        else:
+
+            print("Username Already Exists")
+
+    elif auth_choice == "3":
+
+        exit()
+
+    else:
+
+        print("Invalid Choice")
+        
+tasks = load_tasks(CURRENT_USER)
 
 while True:
 
@@ -31,7 +90,8 @@ while True:
     print(Fore.CYAN + "8. Dashboard")
     print(Fore.CYAN + "9. Edit Task")
     print(Fore.CYAN + "10. Filter Task")
-    print(Fore.CYAN + "11. Exit")
+    print(Fore.CYAN + "11. View Activity Logs")
+    print(Fore.CYAN + "12. Exit")
 
     choice = input("Choose: ")
 
@@ -51,7 +111,7 @@ while True:
 
         tasks.append(task)
 
-        save_tasks(tasks)
+        save_tasks(tasks, CURRENT_USER)
 
         print(Fore.GREEN + "Task Added")
 
@@ -73,7 +133,7 @@ while True:
 
             tasks.pop(index)
 
-            save_tasks(tasks)
+            save_tasks(tasks, CURRENT_USER)
 
             print("Task Deleted")
 
@@ -146,7 +206,7 @@ while True:
 
             tasks[index] = updated
 
-            save_tasks(tasks)
+            save_tasks(tasks, CURRENT_USER)
 
             print(Fore.GREEN + "Task Updated")
 
@@ -157,8 +217,26 @@ while True:
     elif choice == "10":
         
         filter_tasks(tasks)
-
+        
     elif choice == "11":
+
+        if CURRENT_USER == "admin":
+
+            try:
+
+                with open("activity.log", "r") as file:
+
+                    print(file.read())
+
+            except:
+
+                print("No activity logs")
+
+        else:
+
+            print("Admin access only")
+
+    elif choice == "12":
 
         print("Goodbye!")
 

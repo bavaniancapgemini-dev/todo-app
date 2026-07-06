@@ -1,24 +1,23 @@
-def save_tasks(tasks):
+def save_tasks(tasks, username):
 
-    file = open("tasks.txt", "w")
+    filename = f"{username}_tasks.txt"
 
-    for task in tasks:
+    with open(filename, "w") as file:
 
-        file.write(task + "\n")
+        for task in tasks:
 
-    file.close()
+            file.write(task + "\n")
 
-def load_tasks():
+
+def load_tasks(username):
+
+    filename = f"{username}_tasks.txt"
 
     try:
 
-        file = open("tasks.txt", "r")
+        with open(filename, "r") as file:
 
-        tasks = file.read().splitlines()
-
-        file.close()
-
-        return tasks
+            return [line.strip() for line in file.readlines()]
 
     except:
 
